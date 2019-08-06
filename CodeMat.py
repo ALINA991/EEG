@@ -1,5 +1,6 @@
 import Examine 
 import CreateSamples
+import TopoPB
 
         #create PSD samples - deep anesthesia
 sDAdelta, sDAtheta, sDAalpha, sDAbeta, sDAlowgamma = CreateSamples.PSDsamples('cl_data_DA', 2, 500, 7, '.txt')
@@ -24,8 +25,8 @@ clean_LAw= CreateSamples.del_missingch_LA(LAw)
 Examine.saveclean(clean_LAw, 7, 'clean_data_LAw')
 
 
-sLAdelta, sLAtheta, sLAalpha, sLAbeta, sLAlowgamma = CreateSamples.PSDsamples('cl_data_LA', 2, 500, 7, '.npy') #create samples per power band
-sLAwdelta, sLAwtheta, sLAwalpha, sLAwbeta, sLAwlowgamma = CreateSamples.PSDsamples('cl_data_LAw', 2, 500, 7, '.npy')
+sLAdelta, sLAtheta, sLAalpha, sLAbeta, sLAlowgamma = CreateSamples.PSDsamples('clean_data_LA', 2, 500, 7, '.npy') #create samples per power band
+sLAwdelta, sLAwtheta, sLAwalpha, sLAwbeta, sLAwlowgamma = CreateSamples.PSDsamples('clean_data_LAw', 2, 500, 7, '.npy')
 
 Examine.save3Darray('sLAdelta.npy', sLAdelta)   #saving sample arrays                                                                                                                  
 Examine.save3Darray('sLAtheta.npy', sLAtheta)                                                                                                                     
@@ -87,3 +88,67 @@ assert con.shape[0]==uncon.shape[0],    "attention, con et uncon pas le même nb
     con = np.mean(con, axis =1)[...,np.newaxis]
 
 '''
+
+
+accu_clf=np.load('accu_clf.npy')
+accu_forest=np.load('accu_forest.npy')
+accu_knn=np.load('accu_knn.npy')
+accu_lda=np.load('accu_lda.npy')
+accu_qda=np.load('accu_qda.npy')
+accu_mlp=np.load('accu_mlp.npy')
+
+list_clf, list_forest, list_knn, list_lda, list_qda, list_mlp= Class2.split_class(accu_clf, accu_forest, accu_knn, accu_lda, accu_qda, accu_mlp,63)               
+
+np.save('list_clf.npy',list_clf)
+np.save('list_forest.npy',list_forest)
+np.save('list_knn.npy',list_knn)
+np.save('list_lda.npy',list_lda)
+np.save('list_qda.npy',list_qda)
+np.save('list_mlp.npy',list_mlp)
+
+list_clf= np.load('list_clf_LA.npy')
+list_forest= np.load('list_forest_LA.npy') 
+list_knn= np.load('list_knn_LA.npy')
+list_lda = np.load('list_lda_LA.npy')
+list_qda = np.load('list_qda_LA.npy')
+list_mlp = np.load('list_mlp_LA.npy')
+
+list_arr_clf= Examine.list2array(list_clf)                                                                                                                        
+list_arr_forest= Examine.list2array(list_forest)                                                                                                                  
+list_arr_knn= Examine.list2array(list_knn)                                                                                                                        
+list_arr_lda= Examine.list2array(list_lda)                                                                                                                        
+list_arr_qda= Examine.list2array(list_qda)                                                                                                                       
+list_arr_mlp= Examine.list2array(list_mlp)
+
+arrTclf= Examine.list_of_arraysT(list_arr_clf)
+arrTforest= Examine.list_of_arraysT(list_arr_forest)
+arrTknn= Examine.list_of_arraysT(list_arr_knn)
+arrTlda= Examine.list_of_arraysT(list_arr_lda)
+arrTqda= Examine.list_of_arraysT(list_arr_qda)
+arrTmlp= Examine.list_of_arraysT(list_arr_mlp)
+
+np.save('list_clf_LAT.npy',arrTclf)                                                                                                                               
+
+np.save('list_forest_LAT.npy',arrTforest)                                                                                                                         
+
+np.save('list_knn_LAT.npy',arrTknn)                                                                                                                              
+
+np.save('list_lda_LAT.npy',arrTlda)                                                                                                                              
+
+np.save('list_qda_LAT.npy',arrTqda)                                                                                                                              
+
+np.save('list_mlp_LAT.npy',arrTmlp)   
+
+list_clfT= np.load('list_clf_LAT.npy')
+list_forestT= np.load('list_forest_LAT.npy') 
+list_knnT= np.load('list_knn_LAT.npy')
+list_ldaT = np.load('list_lda_LAT.npy')
+list_qdaT = np.load('list_qda_LAT.npy')
+list_mlpT = np.load('list_mlp_LAT.npy')
+
+
+
+
+
+
+

@@ -3,6 +3,8 @@ import numpy as np
 import CreateSamples
 import scipy.interpolate as interp
 import Class2
+import Examine 
+import preprocessing
 
 
 #topoplot average Power bands : Deep Anesthesia
@@ -65,6 +67,7 @@ list_DA_interp= Examine.appendd(interp_avDDA, interp_avTDA, interp_avADA, interp
 
 list_LA=Examine.appendd(avALA, avTLA, avALA, avBLA, avLGLA)
 list_LAw= Examine.appendd(avDLAw, avTLAw, avALAw, avBLAw, avLGLAw)
+list_clf= np.load('list_clf_LAT.npy')
 
 diffD = avDDA - avDDAw
 diffT = avTDA - avTDAw
@@ -78,15 +81,6 @@ diffALA = avALA - avALAw
 diffBLA = avBLA - avBLAw
 diffLGLA = avLGLA - avLGLAw
 
-
-accu_clf=np.load('accu_clf_DA.npy')
-accu_forest=np.load('accu_forest_DA.npy')                                                                                                                        
-accu_knn=np.load('accu_knn_DA.npy')                                                                                                                              
-accu_lda=np.load('accu_lda_DA.npy')                                                                                                                              
-accu_qda=np.load('accu_qda_DA.npy')                                                                                                                              
-accu_mlp=np.load('accu_mlp_DA.npy')     
-
-list_clf, list_forest, list_knn, list_lda, list_qda, list_mlp =Class2.split_class(accu_clf, accu_forest, accu_knn, accu_lda, accu_qda, accu_mlp, 85)                                                                                                                                                   
 
 
 TopoPB.plotTopo(avDDA, avTDAw, avADAw, avBDAw, avLGDAw, avDDA, avTDA, avADA, avBDA, avLGDA, diffD, diffT, diffA, diffB, diffLG)
@@ -123,8 +117,6 @@ TopoPB.plotTopo(avDLA, avTLAw, avALAw, avBLAw, avLGLAw, avDLA, avTLA, avALA, avB
 
         #interpolate new electrode positions LA - saved 
 elect_DA_new= TopoPB.interp_elect_pos('elect_LA','elect_DA')  #saved
-
-
 
 
 
@@ -214,3 +206,64 @@ fig= plt.figure()
     ax6.text(0.4,0.9, 'deep anesthesia')
     ax11.text(0.8,0.9, 'wake - deep')
 
+
+
+#classif 
+
+accu_clf=np.load('accu_clf_DA.npy')
+accu_forest=np.load('accu_forest_DA.npy')                                                                                                                        
+accu_knn=np.load('accu_knn_DA.npy')                                                                                                                              
+accu_lda=np.load('accu_lda_DA.npy')                                                                                                                              
+accu_qda=np.load('accu_qda_DA.npy')                                                                                                                              
+accu_mlp=np.load('accu_mlp_DA.npy')     
+
+list_clf, list_forest, list_knn, list_lda, list_qda, list_mlp =Class2.split_class(accu_clf, accu_forest, accu_knn, accu_lda, accu_qda, accu_mlp, 85)
+
+list_arr_clf= Examine.list2array(list_clf)                                                                                                                        
+list_arr_forest= Examine.list2array(list_forest)                                                                                                                  
+list_arr_knn= Examine.list2array(list_knn)                                                                                                                        
+list_arr_lda= Examine.list2array(list_lda)                                                                                                                        
+list_arr_qda= Examine.list2array(list_qda)                                                                                                                       
+list_arr_mlp= Examine.list2array(list_mlp)
+
+list_clfT= np.load('list_clf_LAT.npy')
+list_forestT= np.load('list_forest_LAT.npy')
+list_knnT= np.load('list_knn_LAT.npy')
+list_ldaT = np.load('list_lda_LAT.npy')
+list_qdaT = np.load('list_qda_LAT.npy')
+list_mlpT = np.load('list_mlp_LAT.npy')
+
+mean_sc_LA= Class2.mean_score(list_clfT, list_forestT, list_knnT, list_ldaT, list_qdaT, list_mlpT)  
+
+TopoPB.plotTopo(list_LA, list_LAw, mean_sc_LA, 'light', 'deep', 'mean accuracy score', 'LA')
+
+
+
+scaler = preprocessing.StandardScaler() 
+scaled_listLA=[]
+
+ for i in range(len(list_LA)): 
+    list_LA_reshape.append(list_LA[i].reshape(-1,1)) 
+    
+for i in range(len(list_LA)):  
+    scaled_listLA.append(scaler.fit_transform(list_LA_reshape[i]))
+
+#run CodeFig2
+
+
+
+#plot DA-LA
+interp_DDA= np.load('interp_avDDA.npy')
+interp_TDA= np.load('interp_avTDA.npy')
+interp_ADA= np.load('interp_avADA.npy')
+interp_BDA= np.load('interp_avBDA.npy')
+interp_LGDA= np.load('interp_avLGDA.npy')
+
+list_interp_DA= Examine.appendd(interp_DDA, interp_TDA,interp_ADA,interp_BDA,interp_LGDA)
+sc_interp_DA= Examine.normalize_list(list_interp_DA)
+
+
+TopoPB.array_topoplot(scaled_interp_DA, sensors_pos_DA_interp)
+TopoPB.array_topoplot(scaled_diff_interp, sensors_pos_LA)   #demander a karim quel meilleur 
+TopoPB.array_topoplot(scaled_diff_interp, sensors_pos_LA)
+TopoPB.array_topoplot(scaled_interp_DA, sensors_pos_LA) 

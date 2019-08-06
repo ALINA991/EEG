@@ -87,7 +87,7 @@ def PSDsamples(file_name, s_len, sfreq, nb_subjects, ext ):
     data : has to be string with file name without .txt & named after 'data'n'.txt' with n = file number corresponding to subject number
     s_len : desired sample lenth (sec)
     aq_time : duration of aquisition (sec)
-    nb_subjects : nb of files to load 
+    nb_subjects : nb of files to load +1 
 
     returns one 3D array per power band, containing mean spectral density per sample per electrode per subject 
     order: delta / theta / alpha / sigma / beta / low gamma
@@ -110,6 +110,17 @@ def PSDsamples(file_name, s_len, sfreq, nb_subjects, ext ):
             files.append(file_name +str(i)+ '.txt')
         elif ext == '.npy':
             files.append(file_name +str(i)+'.npy')
+
+    #LA
+    mins=[]
+    test=[]
+    
+    test.append(np.load(i, allow_pickle=True))
+    mins.append(Examine.minshaperow(test))
+
+    min_shape=min(mins)
+
+
 
     for i in subjects:     
         

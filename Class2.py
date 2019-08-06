@@ -1,5 +1,5 @@
 import numpy as np 
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, permutation_test_score, LeavePGroupsOut
 from sklearn import svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
@@ -14,10 +14,10 @@ def class_PSD_1class(classifier, files):
     file_namesDAw=['sDAwdelta.npy', 'sDAwtheta.npy', 'sDAwalpha.npy', 'sDAwsigma.npy','sDAwbeta.npy','sDAwlowgamma.npy']
 
     file_namesLA=['sLAdelta.npy', 'sLAtheta.npy', 'sLAalpha.npy', 'sLAsigma.npy','sLAbeta.npy','sLAlowgamma.npy']
-    file_names=LAw=['sLAwdelta.npy', 'sLAwtheta.npy', 'sLAwalpha.npy', 'sLAwsigma.npy','sLAwbeta.npy','sLAwlowgamma.npy']
+    file_namesLAw=['sLAwdelta.npy', 'sLAwtheta.npy', 'sLAwalpha.npy', 'sLAwsigma.npy','sLAwbeta.npy','sLAwlowgamma.npy']
 
-    listDA=[]
-    listDAw=[]
+    listAnest=[]
+    listWake=[]
 
     if files =='DA':
         file_names=file_namesDA
@@ -28,17 +28,17 @@ def class_PSD_1class(classifier, files):
 
 
     for i, j in zip(file_names, file_names2):
-        listDA.append(np.load(i))
-        listDAw.append(np.load(j))
+        listAnest.append(np.load(i))
+        listWake.append(np.load(j))
 
-    listDA=np.concatenate(listDA, axis=2)     
-    listDAw=np.concatenate(listDAw, axis=2)
+    listAnest=np.concatenate(listAnest, axis=2)     
+    listWake=np.concatenate(listWake, axis=2)
 
-    listDA=listDA.reshape((-1,listDA.shape[2]))   
-    listDAw=listDAw.reshape((-1,listDAw.shape[2]))
+    listAnest=listAnest.reshape((-1,listAnest.shape[2]))   
+    listWake=listWake.reshape((-1,listWake.shape[2]))
 
-    X=np.concatenate((listDA,listDAw), axis=0)
-    y=np.concatenate((np.zeros(len(listDA)),np.ones(len(listDAw)))) 
+    X=np.concatenate((listAnest,listWake), axis=0)
+    y=np.concatenate((np.zeros(len(listAnest)),np.ones(len(listWake)))) 
 
     X_train, X_test, y_train, y_test = train_test_split(X,y)
 
@@ -98,8 +98,8 @@ def class_PSD(files):
     file_namesLA=['sLAdelta.npy', 'sLAtheta.npy', 'sLAalpha.npy','sLAbeta.npy','sLAlowgamma.npy']
     file_namesLAw=['sLAwdelta.npy', 'sLAwtheta.npy', 'sLAwalpha.npy','sLAwbeta.npy','sLAwlowgamma.npy']
 
-    listDA=[]
-    listDAw=[]
+    listAnest=[]
+    listWake=[]
 
 
 
@@ -113,17 +113,17 @@ def class_PSD(files):
 
 
     for i, j in zip(file_names, file_names2):
-        listDA.append(np.load(i, allow_pickle=True))
-        listDAw.append(np.load(j, allow_pickle=True))
+        listAnest.append(np.load(i, allow_pickle=True))
+        listWake.append(np.load(j, allow_pickle=True))
 
-    listDA=np.concatenate(listDA, axis=2)     
-    listDAw=np.concatenate(listDAw, axis=2)
+    listAnest=np.concatenate(listAnest, axis=2)     
+    listWake=np.concatenate(listWake, axis=2)
 
-    listDA=listDA.reshape((-1,listDA.shape[2]))   
-    listDAw=listDAw.reshape((-1,listDAw.shape[2]))
+    listAnest=listAnest.reshape((-1,listAnest.shape[2]))   
+    listWake=listWake.reshape((-1,listWake.shape[2]))
 
-    X=np.concatenate((listDA,listDAw), axis=0)
-    y=np.concatenate((np.zeros(len(listDA)),np.ones(len(listDAw)))) 
+    X=np.concatenate((listAnest,listWake), axis=0)
+    y=np.concatenate((np.zeros(len(listAnest)),np.ones(len(listWake)))) 
 
     for i in range(X.shape[1]):
         X_train, X_test, y_train, y_test = train_test_split(X[:,i],y)
@@ -204,12 +204,9 @@ Multi-layer perceptron:  0.5847457627118644
 '''
 
 
-
 # class signe feature -- signgle electrode 
 
 def class_sf(files):
-  
-    liste=[0,1,2,3,4,5]
 
     accu_clf = []
     accu_forest=[]
@@ -224,8 +221,8 @@ def class_sf(files):
     file_namesLA=['sLAdelta.npy', 'sLAtheta.npy', 'sLAalpha.npy','sLAbeta.npy','sLAlowgamma.npy']
     file_namesLAw=['sLAwdelta.npy', 'sLAwtheta.npy', 'sLAwalpha.npy','sLAwbeta.npy','sLAwlowgamma.npy']
 
-    listDA=[]
-    listDAw=[]
+    listAnest=[]
+    listWake=[]
 
     if files =='DA':
         file_names=file_namesDA
@@ -237,32 +234,37 @@ def class_sf(files):
 
     for i, j in zip(file_names, file_names2):
 
-        listDA.append(np.load(i, allow_pickle=True))
-        listDAw.append(np.load(j, allow_pickle=True))
+        listAnest.append(np.load(i, allow_pickle=True))
+        listWake.append(np.load(j, allow_pickle=True))
 
-    listDA=np.concatenate(listDA, axis=2)     
-    listDAw=np.concatenate(listDAw, axis=2)
+    listAnest=np.concatenate(listAnest, axis=2)     
+    listWake=np.concatenate(listWake, axis=2)
 
-    listDA=listDA.reshape((-1,listDA.shape[2]))   
-    listDAw=listDAw.reshape((-1,listDAw.shape[2]))
+    listAnest=listAnest.reshape((-1,listAnest.shape[2]))   
+    listWake=listWake.reshape((-1,listWake.shape[2]))
 
-    X=np.concatenate((listDA,listDAw), axis=0)
-    y=np.concatenate((np.zeros(listDA.shape[0]),np.ones(listDAw.shape[0])))
+    X=np.concatenate((listAnest,listWake), axis=0)
+    y=np.concatenate((np.zeros(listAnest.shape[0]),np.ones(listWake.shape[0])))
 
     X=X.T
 
     for i in range(X.shape[0]):
+
+
         
         x = X[i,:]
         x = x.reshape((-1,1))
+        
 
-        X_train, X_test, y_train, y_test = train_test_split(x,y)
-        print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
+        X_train, X_test, y_train, y_test = train_test_split(x,y)  #CROSS VAL --> leave p groups out 
+
+        # permutation t test --> choisir cross val 
+
 
         clf= svm.SVC(gamma='auto')
         clf.fit(X_train, y_train)
 
-        forest= RandomForestClassifier(criterion='entropy', n_estimators=10)
+        forest= RandomForestClassifier(criterion='entropy', n_estimators=10)  #pas utiliser avec signe features
         forest.fit(X_train, y_train)
 
         knn = KNeighborsClassifier(n_neighbors=5, p=2, metric='minkowski')
@@ -277,7 +279,6 @@ def class_sf(files):
         mlp=MLPClassifier()
         mlp.fit(X_train, y_train)
 
-
         accu_clf.append(clf.score(X_test,y_test))
         accu_forest.append(forest.score(X_test,y_test))
         accu_knn.append(knn.score(X_test,y_test))
@@ -287,20 +288,22 @@ def class_sf(files):
 
     return accu_clf, accu_forest, accu_knn, accu_lda, accu_qda, accu_mlp
 
-def mean_score():
+def mean_score(list_clf, list_forest, list_knn, list_lda, list_qda, list_mlp):
 
-    mean_sc=np.zeros((63,6))
-    divider = np.full((63,6), 6)
+    mean_sc=[]
+    divider = np.full((63,), 6)
 
-    for i,j in zip(range(accu_clf.shape[0]), range(accu_clf.shape[1])):
-        mean_sc[i,j]= accu_clf[i,j] + accu_forest[i,j] + accu_knn[i,j] + accu_lda[i,j] + accu_qda[i,j] + accu_mlp
+    for i in range(len(list_clf)):
+        mean_sc.append(list_clf[i]+list_forest[i]+ list_knn[i]+ list_lda[i]+ list_qda[i]+ list_mlp[i])
 
-    mean_sc/=divider 
+    for i in range(len(mean_sc)):
+        mean_sc[i]/=divider 
 
     return mean_sc
 
 def split_class(accu_clf, accu_forest, accu_knn, accu_lda, accu_qda, accu_mlp, nb_electrodes):
 
+    nb_electrodes= int(nb_electrodes)
     clf_delta=[accu_clf[:nb_electrodes]]
     clf_theta=[accu_clf[nb_electrodes:nb_electrodes*2]]
     clf_alpha=[accu_clf[nb_electrodes*2:nb_electrodes*3]]
@@ -319,19 +322,19 @@ def split_class(accu_clf, accu_forest, accu_knn, accu_lda, accu_qda, accu_mlp, n
     knn_beta=[accu_knn[nb_electrodes*3:nb_electrodes*4]]
     knn_lowgamma=[accu_knn[nb_electrodes*4:nb_electrodes*5]]
     
-    lda_delta=[accu_lda[:,nb_electrodes]]
+    lda_delta=[accu_lda[:nb_electrodes]]
     lda_theta=[accu_lda[nb_electrodes:nb_electrodes*2]]
     lda_alpha=[accu_lda[nb_electrodes*2:nb_electrodes*3]]
     lda_beta=[accu_lda[nb_electrodes*3:nb_electrodes*4]]
     lda_lowgamma=[accu_lda[nb_electrodes*4:nb_electrodes*5]]
 
-    qda_delta=[accu_qda[:,nb_electrodes]]
+    qda_delta=[accu_qda[:nb_electrodes]]
     qda_theta=[accu_qda[nb_electrodes:nb_electrodes*2]]
     qda_alpha=[accu_qda[nb_electrodes*2:nb_electrodes*3]]
     qda_beta=[accu_qda[nb_electrodes*3:nb_electrodes*4]]
     qda_lowgamma=[accu_qda[nb_electrodes*4:nb_electrodes*5]]
 
-    mlp_delta=[accu_mlp[:,nb_electrodes]]
+    mlp_delta=[accu_mlp[:nb_electrodes]]
     mlp_theta=[accu_mlp[nb_electrodes:nb_electrodes*2]]
     mlp_alpha=[accu_mlp[nb_electrodes*2:nb_electrodes*3]]
     mlp_beta=[accu_mlp[nb_electrodes*3:nb_electrodes*4]]
@@ -347,6 +350,122 @@ def split_class(accu_clf, accu_forest, accu_knn, accu_lda, accu_qda, accu_mlp, n
 
 
     return list_clf, list_forest, list_knn, list_lda, list_qda, list_mlp
+
+
+
+def class_sf_perm(files):
+
+    score_clf=[]
+    score_knn=[]
+    score_lda=[]
+    score_qda=[]
+    score_mlp=[]
+
+    perm_score_clf=[]
+    perm_score_knn=[]
+    perm_score_lda=[]
+    perm_score_qda=[]
+    perm_score_mlp=[]
+
+    pval_clf=[]
+    pval_knn=[]
+    pval_lda=[]
+    pval_qda=[]
+    pval_mlp=[]
+
+    file_namesDA=['sDAdelta.npy', 'sDAtheta.npy', 'sDAalpha.npy','sDAbeta.npy','sDAlowgamma.npy']
+    file_namesDAw=['sDAwdelta.npy', 'sDAwtheta.npy', 'sDAwalpha.npy','sDAwbeta.npy','sDAwlowgamma.npy']
+
+    file_namesLA=['sLAdelta.npy', 'sLAtheta.npy', 'sLAalpha.npy','sLAbeta.npy','sLAlowgamma.npy']
+    file_namesLAw=['sLAwdelta.npy', 'sLAwtheta.npy', 'sLAwalpha.npy','sLAwbeta.npy','sLAwlowgamma.npy']
+
+    listAnest=[]
+    listWake=[]
+
+    if files =='DA':
+        file_names=file_namesDA
+        file_names2=file_namesDAw
+
+    elif files =='LA':
+        file_names=file_namesLA
+        file_names2=file_namesLAw
+
+    for i, j in zip(file_names, file_names2):
+
+        listAnest.append(np.load(i, allow_pickle=True))
+        listWake.append(np.load(j, allow_pickle=True))
+
+    listAnest=np.concatenate(listAnest, axis=2)     
+    listWake=np.concatenate(listWake, axis=2)
+
+    listAnest=listAnest.reshape((-1,listAnest.shape[2]))   
+    listWake=listWake.reshape((-1,listWake.shape[2]))
+
+    X=np.concatenate((listAnest,listWake), axis=0)
+    y=np.concatenate((np.zeros(listAnest.shape[0]),np.ones(listWake.shape[0])))
+
+    if files == 'DA':
+        groups=np.concatenate((np.full(150,0),np.full(150,1),np.full(150,2),np.full(150,3),np.full(150,4),np.full(150,5),np.full(150,6),np.full(150,7),np.full(150,8), np.full(112,0),np.full(112,1),np.full(112,2),np.full(112,3),np.full(112,4),np.full(112,5),np.full(112,6),np.full(112,7),np.full(112,8)))
+    
+    elif files == 'LA':
+        groups=np.concatenate((np.full(590,0),np.full(590,1),np.full(590,2),np.full(590,3),np.full(590,4),np.full(590,5), np.full(590,6), np.full(690,0),np.full(690,1),np.full(690,2),np.full(690,3),np.full(690,4), np.full(690,5), np.full(690,6)))
+
+
+    lpgo= LeavePGroupsOut(2)
+
+    X=X.T
+
+    for i in range(X.shape[0]):
+
+        x = X[i,:]
+        x = x.reshape((-1,1))
+        
+            #SVM
+        clf= svm.SVC(gamma='auto')
+        score_clf_val, perm_score_clf_val, pval_clf_val= permutation_test_score(clf, x, y, groups, lpgo, n_permutations=1000, n_jobs=2)
+
+        score_clf.append(score_clf_val)
+        perm_score_clf.append(perm_score_clf_val)
+        pval_clf.append(pval_clf_val)
+
+            #KNN
+        knn=KNeighborsClassifier()
+        score_knn_val, perm_score_knn_val, pval_knn_val= permutation_test_score(knn, x, y, groups, lpgo, n_permutations=1000, n_jobs=2)
+
+        score_knn.append(score_knn_val)
+        perm_score_knn.append(perm_score_knn_val)
+        pval_knn.append(pval_knn_val)
+
+            #LDA
+        lda=LinearDiscriminantAnalysis()
+        score_lda_val, perm_score_lda_val, pval_lda_val= permutation_test_score(lda, x, y, groups, lpgo, n_permutations=1000, n_jobs=2)
+
+        score_lda.append(score_lda_val)
+        perm_score_lda.append(perm_score_lda_val)
+        pval_lda.append(pval_lda_val)
+
+            #QDA
+        qda=QuadraticDiscriminantAnalysis()
+        score_qda_val, perm_score_qda_val, pval_qda_val= permutation_test_score(qda, x, y, groups, lpgo, n_permutations=1000, n_jobs=2)
+
+        score_qda.append(score_qda_val)
+        perm_score_qda.append(perm_score_qda_val)
+        pval_qda.append(pval_qda_val)
+
+            #MLP
+        mlp=MLPClassifier()
+        score_mlp_val, perm_score_mlp_val, pval_mlp_val= permutation_test_score(mlp, x, y, groups, lpgo, n_permutations=1000, n_jobs=2)
+
+        score_mlp.append(score_mlp_val)
+        perm_score_mlp.append(perm_score_mlp_val)
+        pval_mlp.append(pval_mlp_val)
+
+        print('electrode n* ', i, ' done')
+
+
+    return score_clf, perm_score_clf, pval_clf, score_knn, perm_score_knn, pval_knn, score_lda, perm_score_lda, pval_lda, score_qda, perm_score_qda, pval_qda, score_mlp, perm_score_mlp, pval_mlp
+
+    
 
 
     

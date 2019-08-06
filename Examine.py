@@ -1,6 +1,7 @@
 import mne 
 import numpy as np
 import scipy.io
+from sklearn import preprocessing
 
 def printShape(file_name, nb_subjects, ext):
 
@@ -61,6 +62,23 @@ def getSmallestItemNb(file_name, nb_subjects, ext):
 
     return min(lens)
 
+def minfromlist(liste):
+
+    mins=[]
+    for i in range(len(liste)):
+        mins.append(min(liste[i]))
+
+    return min(mins)
+
+def maxfromlist(liste):
+
+    maxs=[]
+    for i in range(len(liste)):
+        maxs.append(max(liste[i]))
+        
+    return max(maxs)
+
+
 
 def save3Darray(file_name, list):
     array= np.array(list)
@@ -88,6 +106,7 @@ def saveNpyfromMat_LA(files, new_file_name):
     
     for i in dictio: 
         data= files[i][dictio[i]]
+        data=data[:,:590000]
         np.save(new_file_name +str(i)+'.npy',data)
 
 def saveNpyfromMat_LAw(files, new_file_name ):
@@ -97,6 +116,7 @@ def saveNpyfromMat_LAw(files, new_file_name ):
     
     for i in dictio: 
         data= files[i][dictio[i]]
+        data=data[:,:690000]
         np.save(new_file_name +str(i)+'.npy',data)
 
 def saveNpyfromMat_L(files, new_file_name):
@@ -105,10 +125,80 @@ def saveNpyfromMat_L(files, new_file_name):
     dictio={ 0: 'S2_RawData', 1: 'S3_RawData', 2: 'S4_RawData', 3: 'S5_RawData', 4: 'S6_RawData', 5:'S8_RawData', 6:'S10_RawData'}
     
     for i in dictio: 
+        data=files[i][dictio[i]]
+        data=data[:,:590000]
         np.save(new_file_name +str(i)+'.npy',files[i][dictio[i]])
 
 def saveclean(data_list, nb_subjects, new_file_name):
 
     for i in range(nb_subjects):
         np.save(new_file_name +str(i)+'.npy', data_list[i])
+
+def appendd(delta, theta, alpha, beta, lowgamma):
+
+    liste=[]
+    liste.append(delta)
+    liste.append(theta)
+    liste.append(alpha)
+    liste.append(beta)
+    liste.append(lowgamma)
+
+    return liste
+
+
+def minshaperow(liste):
+    shapes=[]
+    for i in range(len(liste)):
+        shapes.append(liste[i].shape[0])
+
+    return min(shapes)
+
+def list2array(list_of_lists):
+
+    list_of_arrays=[]
+    for i in range(len(list_of_lists)):
+        list_of_arrays.append(np.array(list_of_lists[i]))
+
+    return list_of_arrays
+
+def list_of_arraysT(list_of_arrays):
+    list_transposed=[]
+    for i in range(len(list_of_arrays)):
+        list_transposed.append(list_of_arrays[i].T)
+    
+    for i in range(len(list_transposed)):
+        list_transposed[i]=np.reshape(list_transposed[i], (63,))
+
+    return list_transposed
+
+def normalize_list(list):
+
+    reshaped_list=[]
+    scaled_list=[]
+    scaled_list_reshaped=[]
+
+    scaler = preprocessing.StandardScaler() 
+
+    for i in range(len(list)): 
+        reshaped_list.append(list[i].reshape(-1,1)) 
+    
+    for i in range(len(list)):  
+        scaled_list.append(scaler.fit_transform(reshaped_list[i]))
+
+    for i in range(len(list)):
+        scaled_list_reshaped.append(scaled_list[i].reshape(63,))
+
+    return scaled_list_reshaped
+
+
+
+    
+
+        
+
+
+
+
+
+
         

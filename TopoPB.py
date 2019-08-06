@@ -101,7 +101,7 @@ def plotTopo(list1,list2, list3, label1,label2, label3, data_type):
 
         sensors_pos1=montage.get_pos2d()[3:]
         sensors_pos1=np.delete(sensors_pos1, idx2rem, axis=0)
-        sensors_pos2=sensors_pos1
+        sensors_pos2=np.load('elect_DA_new.npy')
         
     elif data_type == 'LA':
         sensors_pos1= np.load('elect_pos_LA.npy')
@@ -123,92 +123,83 @@ def plotTopo(list1,list2, list3, label1,label2, label3, data_type):
     '''
         #plot topomaps
   
-    plt.suptitle('Average Power Bands') #y= fontsize= 
+   
+    plt.suptitle('Average Power Bands' ) 
 
     plt.subplot(4,7,1, frameon= False)
     plt.annotate(label1, xy=(0.5,0.5))
     plt.subplot(4,7,2)
-    mne.viz.plot_topomap(list1[0],sensors_pos1,show=False, cmap='coolwarm')
+    mne.viz.plot_topomap(list1[0],sensors_pos1, vmin=-1, vmax=1, cmap='coolwarm')
     plt.title('Delta')  #2-4 Hz
     plt.subplot(4,7,3)
-    mne.viz.plot_topomap(list1[1],sensors_pos1,show=False,cmap='coolwarm')
+    mne.viz.plot_topomap(list1[1],sensors_pos1, vmin=-1, vmax=1,cmap='coolwarm')
     plt.title('Theta')  #5-7 Hz
     plt.subplot(4,7,4)
-    mne.viz.plot_topomap(list1[2],sensors_pos1,show=False,cmap='coolwarm')
+    mne.viz.plot_topomap(list1[2],sensors_pos1, vmin=-1, vmax=1,cmap='coolwarm')
     plt.title('Alpha')  #8-13 Hz
     plt.subplot(4,7,5)
-    mne.viz.plot_topomap(list1[3],sensors_pos1,show=False,cmap='coolwarm')
+    mne.viz.plot_topomap(list1[3],sensors_pos1, vmin=-1, vmax=1,cmap='coolwarm')
     plt.title('Beta')   #13-30
     plt.subplot(4,7,6)
-    mne.viz.plot_topomap(list1[4],sensors_pos1,show=False,cmap='coolwarm')
+    mne.viz.plot_topomap(list1[4],sensors_pos1, vmin=-1, vmax=1,cmap='coolwarm')
     plt.title('Low Gamma')  #30-50
 
     plt.subplot(4,7,8,frameon= False)
     plt.annotate(label2, xy=(0.5,0.5))
     plt.subplot(4,7,9)
-    mne.viz.plot_topomap(list2[0],sensors_pos2,show=False, cmap='coolwarm')
+    mne.viz.plot_topomap(list2[0],sensors_pos2, vmin=-1, vmax=1, cmap='coolwarm')
     plt.title('Delta')  #2-4 Hz
     plt.subplot(4,7,10)
-    mne.viz.plot_topomap(list2[1],sensors_pos2,show=False,cmap='coolwarm')
+    mne.viz.plot_topomap(list2[1],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
     plt.title('Theta')  #5-7 Hz
     plt.subplot(4,7,11)
-    mne.viz.plot_topomap(list2[2],sensors_pos2,show=False,cmap='coolwarm')
+    mne.viz.plot_topomap(list2[2],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
     plt.title('Alpha')  #8-13 Hz
     plt.subplot(4,7,12)
-    mne.viz.plot_topomap(list2[3],sensors_pos2,show=False,cmap='coolwarm')
+    mne.viz.plot_topomap(list2[3],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
     plt.title('Beta')   #13-30
     plt.subplot(4,7,13)
-    mne.viz.plot_topomap(list2[4],sensors_pos2,show=False,cmap='coolwarm')
+    mne.viz.plot_topomap(list2[4],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
     plt.title('Low Gamma')  #30-50
 
     plt.subplot(4,7,15,frameon= False)
     plt.annotate(label1 +'-'+label2, xy=(0.5,0.5)) #,plt.delaxes(ax2)? 
     plt.subplot(4,7,16)
-    mne.viz.plot_topomap(list_diff[0],sensors_pos2,show=False, cmap='coolwarm')
+    mne.viz.plot_topomap(list_diff[0],sensors_pos2, vmin=-1, vmax=1, cmap='coolwarm')
     plt.title('Delta')  #2-4 Hz
     plt.subplot(4,7,17)
-    mne.viz.plot_topomap(list_diff[1],sensors_pos2,show=False,cmap='coolwarm')
+    mne.viz.plot_topomap(list_diff[1],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
     plt.title('Theta')  #5-7 Hz
     plt.subplot(4,7,18)
-    mne.viz.plot_topomap(list_diff[2],sensors_pos2,show=False,cmap='coolwarm')
+    mne.viz.plot_topomap(list_diff[2],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
     plt.title('Alpha')  #8-13 Hz
     plt.subplot(4,7,19)
-    mne.viz.plot_topomap(list_diff[3],sensors_pos2,show=False,cmap='coolwarm')
+    mne.viz.plot_topomap(list_diff[3],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
     plt.title('Beta')   #13-30
     plt.subplot(4,7,20)
-    mne.viz.plot_topomap(list_diff[4],sensors_pos2,show=False,cmap='coolwarm')
+    mne.viz.plot_topomap(list_diff[4],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
     plt.title('Low Gamma')  #30-50
 
 
     plt.subplot(4,7,22,frameon= False)
     plt.annotate(label3, xy=(0.5,0.5)) #,plt.delaxes(ax2)? 
     plt.subplot(4,7,23)
-    mne.viz.plot_topomap(list3[0],sensors_pos2,show=False, cmap='coolwarm')
-    plt.title('CLF')  #2-4 Hz
+    mne.viz.plot_topomap(list3[0],sensors_pos2, vmin=-1, vmax=1, cmap='coolwarm')
+    plt.title('Delta')  #2-4 Hz
     plt.subplot(4,7,24)
-    mne.viz.plot_topomap(list3[1],sensors_pos2,show=False,cmap='coolwarm')
-    plt.title('Forest')  #5-7 Hz
+    mne.viz.plot_topomap(list3[1],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
+    plt.title('Theta')  #5-7 Hz
     plt.subplot(4,7,25)
-    mne.viz.plot_topomap(list3[2],sensors_pos2,show=False,cmap='coolwarm')
-    plt.title('KNN')  #8-13 Hz
+    mne.viz.plot_topomap(list3[2],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
+    plt.title('Alpha')  #8-13 Hz
     plt.subplot(4,7,26)
-    mne.viz.plot_topomap(list3[3],sensors_pos2,show=False,cmap='coolwarm')
-    plt.title('LDA')   #13-30
+    mne.viz.plot_topomap(list3[3],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
+    plt.title('Beta')   #13-30
     plt.subplot(4,7,27)
-    mne.viz.plot_topomap(list3[4],sensors_pos2,show=False,cmap='coolwarm')
-    plt.title('QDA')  #30-50
-    plt.subplot(4,7,28)
-    mne.viz.plot_topomap(list3[5],sensors_pos2,show=False,cmap='coolwarm')
-    plt.title('MLP')  #30-50
+    mne.viz.plot_topomap(list3[4],sensors_pos2, vmin=-1, vmax=1,cmap='coolwarm')
+    plt.title('Low Gamma')  #30-50
 
-
-
-
-    #fig.colorbar()
-
-
-
-
+    plt.colorbar()
 
     plt.show(block=False)
 
@@ -245,6 +236,66 @@ def interp_data(list_big, elect_big, elect_small, interp_elect):
 
     return list_interp_data_big
 
+def interp_data2(elect_big, elect_small, list_big):
+
+    second_min=100
+    idx_min=[]
+    idx_2min=[]
+    mean_elect=[]
+    interp_elect_min=[]
+    interp_elect_2min=[]
+    list_interp_data_big=[]
+    divider=2
+
+    spat_dist= spatial.distance.cdist(elect_small, elect_big)
+
+    for i in range(spat_dist.shape[0]):
+        
+        spat_dist_list= spat_dist[i].tolist()
+        minim=min(spat_dist_list)
+        idx_min.append(spat_dist_list.index(minim)) 
+
+        for y in range(len(spat_dist_list)):
+            if (spat_dist_list[y] < second_min) and (spat_dist_list[y] >  minim) :
+                second_min = spat_dist_list[y]
+            idx_2min.append(spat_dist_list.index(second_min))
+
+    for i in range(len(idx_min)):
+        interp_elect_min.append(elect_big[idx_min[i]])
+        interp_elect_2min.append(elect_big[idx_2min[i]])
+
+    for i in range(len(interp_elect_min)):
+        mean_elect.append((interp_elect_min[i]+interp_elect_2min))
+        mean_elect[i]=mean_elect[i]/divider
+
+    for i in range(len(list_big)):
+        list_interp_data_big.append(scipy.interpolate.griddata(elect_big, list_big[i], mean_elect))
+
+    return list_interp_data_big
+  
 
 # mindist = np.min(spatial.distance.cdist(elect_LA, elect_DA), axis=1) 
+
+
+
+def array_topoplot(toplot, ch_xy, showtitle=False, titles=None, savefig=False, figpath=None, vmin=-1, vmax=1):
+    #create fig
+    fig, ax = plt.subplots(1,len(toplot), figsize=(20,10))
+    #create a topomap for each data array
+    for i, data in enumerate(toplot):
+        image,_ = mne.viz.plot_topomap(data=data, pos=ch_xy, cmap='coolwarm', vmin=vmin, vmax=vmax, axes=ax[i], show=False)
+        #option for title
+        if showtitle == True:
+            ax[i].set_title(titles[i], fontdict={'fontsize': 20, 'fontweight': 'heavy'})
+    #add a colorbar at the end of the line (weird trick from https://www.martinos.org/mne/stable/auto_tutorials/stats-sensor-space/plot_stats_spatio_temporal_cluster_sensors.html#sphx-glr-auto-tutorials-stats-sensor-space-plot-stats-spatio-temporal-cluster-sensors-py)
+    from mpl_toolkits.axes_grid1 import make_axes_locatable
+    divider = make_axes_locatable(ax[-1])
+    ax_colorbar = divider.append_axes('right', size='5%', pad=0.05)
+    plt.colorbar(image, cax=ax_colorbar)
+    ax_colorbar.tick_params(labelsize=14)
+    #save plot if specified
+    if savefig == True:
+        plt.savefig(figpath, dpi=300)
+    plt.show()
+    return fig, ax
         
